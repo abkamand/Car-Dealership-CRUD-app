@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>CS340</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+	<link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    
+    
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="/" id="homeicon" style="margin-left: 15px;">🏎️</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="cars">View Cars</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="salesreps">View Salesreps</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="invoices">View Invoices</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="customers">View Customers</a>
+                </li>
+                 <li class="nav-item">
+                    <a class="nav-link" href="carsinvoices">View Cars-Invoices</a>
+                </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div>
+        <h3 style="text-align:center;">Update Invoice</h1>
+    </div>
+    <div>
+        <h3 style="text-align:center;">This page is for updating an invoice in the database</h1>
+        <br>
+    </div>
+    <div>
+        <table class ="table table-striped table-hover" id="table" data-filter-control="true" data-show-search-clear-button="false">
+        {% if data[0] %}
+            <thead>
+                <tr>
+                    <!-- Iterate through each key in the first entry to get the
+                    column name -->
+                    {% for key in data[0][0].keys() %}
+
+                    <!-- Create a <th> tag with the key inside of it, this will be
+                    our header row -->
+                    <th scope="col" data-field="{{ key }}" data-filter-control="input">{{ key }}</th>
+
+                    <!-- End of this for loop -->
+                    {% endfor %}
+                </tr>
+            <tbody>
+                <!-- Now, iterate through every item in data -->
+                {% for item in data[0] %}
+                <tr>
+                    <!-- Then iterate through every key in the current item dictionary -->
+                    {% for key in item.keys() %}
+
+                    <!-- Create a <td> element with the value of that key in it -->
+                    <td>{{item[key]}}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+        {% endif %}
+        </table>
+    </div>
+    <div style= "width: 50%; margin: auto;">
+        <form action="/updateinvoice" method="post">
+            <fieldset>
+                <div class="form-group">
+                      <label for="invoiceID">Invoice ID:</label>
+                        <select id="invoiceID" name="invoiceID">
+                            {% if data[0] %}
+                                {% for item in data[0] %}
+                                    <option value="{{ item['invoice_id'] }}">{{ item['invoice_id'] }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                </div>
+                <div class="form-group">
+                      <label for="customerID">Customer Name:</label>
+                        <select id="customerID" name="customerID">
+                            {% if data[1] %}
+                                {% for item in data[1] %}
+                                    <option value="{{ item['customer_id'] }}">{{ item['customer_name'] }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="repID">Salesrep Name (Not Required):</label>
+                        <select id="repID" name="repID">
+                            <option value="0">NULL</option>
+                            {% if data[2] %}
+                                {% for item in data[2] %}
+                                    <option value="{{ item['rep_id'] }}">{{ item['rep_name'] }}</option>
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="formGroupExampleInput3">Total Price:</label>
+                    <input type="text" class="form-control" id="invoicePrice" name="invoicePrice" pattern="[0-9]{1,}" placeholder="" required>
+                </div>
+                <div class="form-group">
+                    <label for="saleDate">Date of Sale:</label>
+                    <input type="date" id="saleDate" name="saleDate" required>
+                </div>
+                <input type="submit" value="Submit" name="Submit" class="btn btn-primary" style="margin:.5rem;">
+            </fieldset>
+        </form>
+    </div>
+
+<script>
+  $(function() {
+    $('#table').bootstrapTable()
+  })
+</script>
